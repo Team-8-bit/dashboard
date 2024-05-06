@@ -9,14 +9,18 @@ sealed interface WidgetData: Sendable {
     val name: String
 }
 
-/** Represents a simple string widget being sent to or from the dashboard. */
+/** Represents a simple update of a string widget being sent to the dashboard. */
 @Serializable
-data class StringWidget(override val name: String, val value: String, val allowDashboardEdit: Boolean = false): WidgetData
+data class ImmutableStringWidgetData(override val name: String, val value: String): WidgetData
 
-/** Represents a simple boolean widget being sent to or from the dashboard. */
+/** Represents a simple update of a boolean widget being sent to the dashboard. */
 @Serializable
-data class BooleanWidget(override val name: String, val value: Boolean, val allowDashboardEdit: Boolean = false): WidgetData
+data class ImmutableBooleanWidgetData(override val name: String, val value: Boolean): WidgetData
 
-/** Represents a simple double widget being sent to or from the dashboard. */
+/** Represents a simple update of a boolean widget being sent to or from the dashboard. */
 @Serializable
-data class DoubleWidget(override val name: String, val value: Double, val allowDashboardEdit: Boolean = false): WidgetData
+data class MutableBooleanWidgetData(override val name: String, val value: Boolean): WidgetData
+
+/** Represents a simple update of a double widget being sent to the dashboard. */
+@Serializable
+data class ImmutableDoubleWidgetData(override val name: String, val value: Double): WidgetData

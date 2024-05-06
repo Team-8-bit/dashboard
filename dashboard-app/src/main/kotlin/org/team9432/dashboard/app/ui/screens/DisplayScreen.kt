@@ -16,10 +16,7 @@ import org.team9432.dashboard.app.ui.widgets.ImmutableBooleanWidget
 import org.team9432.dashboard.app.ui.widgets.MutableBooleanWidget
 import org.team9432.dashboard.app.ui.widgets.TextWidget
 import org.team9432.dashboard.app.ui.widgets.WidgetBase
-import org.team9432.dashboard.shared.BooleanWidget
-import org.team9432.dashboard.shared.DoubleWidget
-import org.team9432.dashboard.shared.StringWidget
-import org.team9432.dashboard.shared.TabWidget
+import org.team9432.dashboard.shared.*
 
 // Number of rows and columns to display
 private var numberOfCols = 10 // X
@@ -64,16 +61,10 @@ fun Widget(data: TabWidget) {
 @Composable
 fun display(name: String) {
     when (val value = Client.getWidgetData(name)) {
-        is StringWidget -> TextWidget(value.name, value.value)
-        is BooleanWidget -> {
-            if (value.allowDashboardEdit) {
-                MutableBooleanWidget(value.name, value.value)
-            } else {
-                ImmutableBooleanWidget(value.name, value.value)
-            }
-        }
-
-        is DoubleWidget -> TextWidget(value.name, value.value.toString())
+        is ImmutableStringWidgetData -> TextWidget(value.name, value.value)
+        is ImmutableBooleanWidgetData -> ImmutableBooleanWidget(value.name, value.value)
+        is MutableBooleanWidgetData -> MutableBooleanWidget(value.name, value.value)
+        is ImmutableDoubleWidgetData -> TextWidget(value.name, value.value.toString())
 
         null -> TextWidget(name, "missing value")
     }

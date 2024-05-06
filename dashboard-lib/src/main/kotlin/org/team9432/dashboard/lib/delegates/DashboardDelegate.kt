@@ -1,20 +1,13 @@
 package org.team9432.dashboard.lib.delegates
 
 import org.team9432.dashboard.lib.Dashboard
-import org.team9432.dashboard.shared.BooleanWidget
-import org.team9432.dashboard.shared.DoubleWidget
-import org.team9432.dashboard.shared.StringWidget
-import org.team9432.dashboard.shared.WidgetData
+import org.team9432.dashboard.shared.*
 import kotlin.reflect.KProperty
 
-fun stringDashboardWidget(title: String, initialValue: String, allowDashboardEdit: Boolean = false) =
-    GenericWidget(title, initialValue, { StringWidget(title, it, allowDashboardEdit) }, { (it as StringWidget).value })
-
-fun booleanDashboardWidget(title: String, initialValue: Boolean, allowDashboardEdit: Boolean = false) =
-    GenericWidget(title, initialValue, { BooleanWidget(title, it, allowDashboardEdit) }, { (it as BooleanWidget).value })
-
-fun doubleDashboardWidget(title: String, initialValue: Double, allowDashboardEdit: Boolean = false) =
-    GenericWidget(title, initialValue, { DoubleWidget(title, it, allowDashboardEdit) }, { (it as DoubleWidget).value })
+fun immutableStringDashboardWidget(title: String, initialValue: String) = GenericWidget(title, initialValue, { ImmutableStringWidgetData(title, it) }, { (it as ImmutableStringWidgetData).value })
+fun immutableBooleanDashboardWidget(title: String, initialValue: Boolean) = GenericWidget(title, initialValue, { ImmutableBooleanWidgetData(title, it) }, { (it as ImmutableBooleanWidgetData).value })
+fun mutableBooleanDashboardWidget(title: String, initialValue: Boolean) = GenericWidget(title, initialValue, { MutableBooleanWidgetData(title, it) }, { (it as MutableBooleanWidgetData).value })
+fun immutableDoubleDashboardWidget(title: String, initialValue: Double) = GenericWidget(title, initialValue, { ImmutableDoubleWidgetData(title, it) }, { (it as ImmutableDoubleWidgetData).value })
 
 class GenericWidget<T>(private val title: String, initialValue: T, private val getWidget: (T) -> WidgetData, private val getValue: (WidgetData?) -> T) {
     init {
