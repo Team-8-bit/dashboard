@@ -6,8 +6,12 @@ import kotlin.reflect.KProperty
 
 fun immutableStringDashboardWidget(title: String, initialValue: String) = GenericWidget(title, initialValue, { ImmutableStringWidgetData(title, it) }, { (it as ImmutableStringWidgetData).value })
 fun immutableBooleanDashboardWidget(title: String, initialValue: Boolean) = GenericWidget(title, initialValue, { ImmutableBooleanWidgetData(title, it) }, { (it as ImmutableBooleanWidgetData).value })
-fun mutableBooleanDashboardWidget(title: String, initialValue: Boolean) = GenericWidget(title, initialValue, { MutableBooleanWidgetData(title, it) }, { (it as MutableBooleanWidgetData).value })
 fun immutableDoubleDashboardWidget(title: String, initialValue: Double) = GenericWidget(title, initialValue, { ImmutableDoubleWidgetData(title, it) }, { (it as ImmutableDoubleWidgetData).value })
+
+fun mutableBooleanDashboardWidget(title: String, initialValue: Boolean, onDashboardChange: ((Boolean) -> Unit)? = null): GenericWidget<Boolean> {
+    if (onDashboardChange != null) Dashboard.registerCallbackForWidget(title) { onDashboardChange.invoke((it as MutableBooleanWidgetData).value) }
+    return GenericWidget(title, initialValue, { MutableBooleanWidgetData(title, it) }, { (it as MutableBooleanWidgetData).value })
+}
 
 class GenericWidget<T>(private val title: String, initialValue: T, private val getWidget: (T) -> WidgetData, private val getValue: (WidgetData?) -> T) {
     init {

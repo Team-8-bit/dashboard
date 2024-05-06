@@ -18,9 +18,19 @@ object Dashboard {
         Server.run()
     }
 
+    private val callbacks = mutableMapOf<String, (WidgetData) -> Unit>()
+
+    fun registerCallbackForWidget(name: String, callback: (WidgetData) -> Unit) {
+        callbacks[name] = callback
+    }
+
     fun processInformation(sendable: Sendable) {
         when (sendable) {
-            is WidgetData -> currentValues[sendable.name] = sendable
+            is WidgetData -> {
+                currentValues[sendable.name] = sendable
+                callbacks[sendable.name]?.invoke(sendable)
+            }
+
             else -> {}
         }
     }
