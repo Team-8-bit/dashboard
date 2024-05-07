@@ -10,6 +10,7 @@ import io.ktor.serialization.kotlinx.json.*
 import kotlinx.coroutines.*
 import kotlinx.serialization.json.Json
 import org.team9432.dashboard.app.ui.AppState
+import org.team9432.dashboard.shared.AddTab
 import org.team9432.dashboard.shared.Sendable
 
 object Ktor {
@@ -42,7 +43,8 @@ object Ktor {
             currentJob = launch {
                 // Get the current state of everything from the robot code
                 val initialData = getInitialData()
-                initialData.forEach { Client.processInformation(it) }
+                initialData.filterIsInstance<AddTab>().forEach { Client.processInformation(it) }
+                initialData.filter { it !is AddTab }.forEach { Client.processInformation(it) }
 
                 // Connect to the websocket
                 val session = connectToWebsocket()

@@ -13,7 +13,8 @@ import androidx.compose.ui.unit.dp
 import org.team9432.dashboard.app.io.Client
 import org.team9432.dashboard.app.ui.TabBar
 import org.team9432.dashboard.app.ui.widgets.*
-import org.team9432.dashboard.shared.*
+import org.team9432.dashboard.shared.TabWidget
+import org.team9432.dashboard.shared.WidgetType.*
 
 // Number of rows and columns to display
 private var numberOfCols = 10 // X
@@ -57,12 +58,19 @@ fun Widget(data: TabWidget) {
 /** Finds and displays the correct type of widget by the given name. */
 @Composable
 fun display(name: String) {
-    when (val value = Client.getWidgetData(name)) {
-        is DisplayOnlyStringData -> TextWidget(value.name, value.value)
-        is DisplayOnlyBooleanData -> ImmutableBooleanWidget(value.name, value.value)
-        is WritableBooleanData -> MutableBooleanWidget(value.name, value.value)
-        is DisplayOnlyDoubleData -> TextWidget(value.name, value.value.toString())
-        is ButtonData -> ButtonWidget(value.name)
+    val value = Client.getWidgetData(name)
+
+    if (value == null) {
+        TextWidget(name, "missing value")
+        return
+    }
+
+    when (Client.getTypeOfWidget(name)) {
+        DisplayOnlyString -> TextWidget(name, value)
+        DisplayOnlyBoolean -> ImmutableBooleanWidget(name, value.toBoolean())
+        WritableBoolean -> MutableBooleanWidget(name, value.toBoolean())
+        DisplayOnlyDouble -> TextWidget(name, value)
+        Button -> ButtonWidget(name)
         null -> TextWidget(name, "missing value")
     }
 }

@@ -18,29 +18,17 @@ object Dashboard {
         Server.run()
     }
 
-    private val callbacks = mutableMapOf<String, (WidgetData) -> Unit>()
+    private val callbacks = mutableMapOf<String, (Any) -> Unit>()
 
-    fun registerCallbackForWidget(name: String, callback: (WidgetData) -> Unit) {
+    fun registerCallbackForWidget(name: String, callback: (Any) -> Unit) {
         callbacks[name] = callback
     }
 
     fun processInformation(sendable: Sendable) {
         when (sendable) {
-            is WidgetData -> {
-                when (sendable) {
-                    is ButtonData -> {
-                        callbacks[sendable.name]?.invoke(sendable)
-                    }
-
-                    is DisplayOnlyDoubleData, is DisplayOnlyStringData, is DisplayOnlyBooleanData -> {
-                        currentValues[sendable.name] = sendable
-                    }
-
-                    is WritableBooleanData -> {
-                        currentValues[sendable.name] = sendable
-                        callbacks[sendable.name]?.invoke(sendable)
-                    }
-                }
+            is WidgetUpdate -> {
+                currentValues[sendable.name] = sendable
+                callbacks[sendable.name]?.invoke(sendable)
             }
 
             else -> {}
@@ -52,15 +40,15 @@ object Dashboard {
 
     fun registerButton(name: String, onClick: () -> Unit) {
         callbacks[name] = { onClick() }
-        updateWidget(ButtonData(name))
+        updateWidget(WidgetUpdate(name, ""))
     }
 
 
     /* -------- Widgets -------- */
 
-    private val currentValues = mutableMapOf<String, WidgetData>()
+    private val currentValues = mutableMapOf<String, WidgetUpdate>()
 
-    fun updateWidget(value: WidgetData) {
+    fun updateWidget(value: WidgetUpdate) {
         currentValues[value.name] = value
         Server.sendToAll(value)
     }

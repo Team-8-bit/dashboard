@@ -2,6 +2,7 @@ package org.team9432.dashboard.lib.layout
 
 import org.team9432.dashboard.shared.Tab
 import org.team9432.dashboard.shared.TabWidget
+import org.team9432.dashboard.shared.WidgetType
 
 class DashboardTab(rows: Int, cols: Int, val index: Int, val name: String = "Unnamed") {
     private data class Coordinate(val row: Int, val col: Int)
@@ -12,7 +13,7 @@ class DashboardTab(rows: Int, cols: Int, val index: Int, val name: String = "Unn
     private val usedCoordinates = mutableMapOf<Coordinate, String>()
     private val registeredWidgets = mutableListOf<TabWidget>()
 
-    fun addWidget(row: Int, col: Int, name: String, rowsSpanned: Int = 1, colsSpanned: Int = 1) {
+    fun addWidget(row: Int, col: Int, name: String, type: WidgetType, rowsSpanned: Int = 1, colsSpanned: Int = 1) {
         require(row + (rowsSpanned - 1) in rowIndices && col + (colsSpanned - 1) in colIndices) { "This widget does not fit within the grid!" }
 
         val rowsUsed = row..<(row + rowsSpanned)
@@ -35,7 +36,7 @@ class DashboardTab(rows: Int, cols: Int, val index: Int, val name: String = "Unn
             usedCoordinates[it] = name
         }
 
-        registeredWidgets.add(TabWidget(row, col, name, rowsSpanned, colsSpanned))
+        registeredWidgets.add(TabWidget(row, col, name, type, rowsSpanned, colsSpanned))
     }
 
     fun getSendable(): Tab = Tab(name, index, registeredWidgets)

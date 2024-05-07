@@ -11,9 +11,9 @@ object Client {
     /** Process a newly received piece of information. */
     fun processInformation(sendable: Sendable) {
         when (sendable) {
-            is AddTab -> currentTabs[sendable.name] = sendable.tab
+            is AddTab -> addTab(sendable)
             is RemoveTab -> removeTab(sendable.name)
-            is WidgetData -> valueMap[sendable.name] = sendable
+            is WidgetUpdate -> valueMap[sendable.name] = sendable.value
         }
     }
 
@@ -23,18 +23,32 @@ object Client {
     /* -------- Widgets -------- */
 
     /** Map of current widget states. */
-    private val valueMap = mutableStateMapOf<String, WidgetData>()
+    private val valueMap = mutableStateMapOf<String, String>()
+
+    /** The type of each widget. */
+    private val widgetTypes = mutableMapOf<String, WidgetType>()
+    fun getTypeOfWidget(name: String) = widgetTypes[name]
+    fun setTypeOfWidget(name: String, type: WidgetType) {
+        widgetTypes[name] = type
+    }
 
     /** Gets the widget data with a given name. */
     fun getWidgetData(name: String) = valueMap[name]
 
     /** Updates the state of a widget by sending it to the robot code. */
-    fun updateWidget(widgetData: WidgetData) = Ktor.send(widgetData)
+    fun updateWidget(widgetUpdate: WidgetUpdate) = Ktor.send(widgetUpdate)
+
 
     /* -------- Tabs -------- */
 
     /** A map of the current tabs. */
     val currentTabs = mutableStateMapOf<String, Tab>()
+
+    /** Adds a tab. */
+    private fun addTab(sendable: AddTab) {
+        sendable.tab.data.forEach { setTypeOfWidget(it.name, it.type) }
+        currentTabs[sendable.name] = sendable.tab
+    }
 
     /** Removes a tab. */
     private fun removeTab(name: String) {
