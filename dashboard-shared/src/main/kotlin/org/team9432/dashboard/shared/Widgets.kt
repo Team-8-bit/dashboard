@@ -12,21 +12,21 @@ sealed interface WidgetData: Sendable {
 
 /* -------- Immutable Widgets -------- */
 
-/** Represents request to update the value of an immutable string widget. */
+/** Request to update the value of a display only string widget. */
 @Serializable
-data class ImmutableStringWidgetData(override val name: String, val value: String): WidgetData
+data class DisplayOnlyStringData(override val name: String, val value: String): WidgetData
 
-/** Represents request to update the value of an immutable boolean widget. */
+/** Request to update the value of a display only boolean widget. */
 @Serializable
-data class ImmutableBooleanWidgetData(override val name: String, val value: Boolean): WidgetData
+data class DisplayOnlyBooleanData(override val name: String, val value: Boolean): WidgetData
 
-/** Represents request to update the value of an immutable double widget. */
+/** Request to update the value of a display only double widget. */
 @Serializable
-data class ImmutableDoubleWidgetData(override val name: String, val value: Double): WidgetData
+data class DisplayOnlyDoubleData(override val name: String, val value: Double): WidgetData
 
 
 /* -------- Mutable Widgets -------- */
 
-/** Represents request to update the value of a mutable boolean widget. */
+/** Request to update the value of a writable boolean widget. */
 @Serializable
-data class MutableBooleanWidgetData(override val name: String, val value: Boolean): WidgetData
+data class WritableBooleanData(override val name: String, val value: Boolean): WidgetData

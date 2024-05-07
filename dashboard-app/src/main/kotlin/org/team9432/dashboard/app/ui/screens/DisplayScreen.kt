@@ -61,10 +61,10 @@ fun Widget(data: TabWidget) {
 @Composable
 fun display(name: String) {
     when (val value = Client.getWidgetData(name)) {
-        is ImmutableStringWidgetData -> TextWidget(value.name, value.value)
-        is ImmutableBooleanWidgetData -> ImmutableBooleanWidget(value.name, value.value)
-        is MutableBooleanWidgetData -> MutableBooleanWidget(value.name, value.value)
-        is ImmutableDoubleWidgetData -> TextWidget(value.name, value.value.toString())
+        is DisplayOnlyStringData -> TextWidget(value.name, value.value)
+        is DisplayOnlyBooleanData -> ImmutableBooleanWidget(value.name, value.value)
+        is WritableBooleanData -> MutableBooleanWidget(value.name, value.value)
+        is DisplayOnlyDoubleData -> TextWidget(value.name, value.value.toString())
 
         null -> TextWidget(name, "missing value")
     }
