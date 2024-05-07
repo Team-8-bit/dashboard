@@ -27,8 +27,8 @@ object Dashboard {
     fun processInformation(sendable: Sendable) {
         when (sendable) {
             is WidgetUpdate -> {
-                currentValues[sendable.name] = sendable
-                callbacks[sendable.name]?.invoke(sendable)
+                currentValues[sendable.id] = sendable
+                callbacks[sendable.id]?.invoke(sendable)
             }
 
             else -> {}
@@ -40,7 +40,7 @@ object Dashboard {
 
     fun registerButton(name: String, onClick: () -> Unit) {
         callbacks[name] = { onClick() }
-        updateWidget(WidgetUpdate(name, ""))
+        updateWidget(WidgetUpdate(name.hashCode().toString(), ""))
     }
 
 
@@ -49,7 +49,7 @@ object Dashboard {
     private val currentValues = mutableMapOf<String, WidgetUpdate>()
 
     fun updateWidget(value: WidgetUpdate) {
-        currentValues[value.name] = value
+        currentValues[value.id] = value
         Server.sendToAll(value)
     }
 

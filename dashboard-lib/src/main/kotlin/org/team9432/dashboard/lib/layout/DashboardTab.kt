@@ -1,7 +1,7 @@
 package org.team9432.dashboard.lib.layout
 
 import org.team9432.dashboard.shared.Tab
-import org.team9432.dashboard.shared.TabWidget
+import org.team9432.dashboard.shared.WidgetDefinition
 import org.team9432.dashboard.shared.WidgetType
 
 class DashboardTab(rows: Int, cols: Int, val index: Int, val name: String = "Unnamed") {
@@ -11,7 +11,7 @@ class DashboardTab(rows: Int, cols: Int, val index: Int, val name: String = "Unn
     private val colIndices = 0..<cols
 
     private val usedCoordinates = mutableMapOf<Coordinate, String>()
-    private val registeredWidgets = mutableListOf<TabWidget>()
+    private val registeredWidgets = mutableListOf<WidgetDefinition>()
 
     fun addWidget(row: Int, col: Int, name: String, type: WidgetType, rowsSpanned: Int = 1, colsSpanned: Int = 1) {
         require(row + (rowsSpanned - 1) in rowIndices && col + (colsSpanned - 1) in colIndices) { "This widget does not fit within the grid!" }
@@ -36,7 +36,7 @@ class DashboardTab(rows: Int, cols: Int, val index: Int, val name: String = "Unn
             usedCoordinates[it] = name
         }
 
-        registeredWidgets.add(TabWidget(row, col, name, type, rowsSpanned, colsSpanned))
+        registeredWidgets.add(WidgetDefinition(row, col, name, name.hashCode().toString(), type, rowsSpanned, colsSpanned))
     }
 
     fun getSendable(): Tab = Tab(name, index, registeredWidgets)

@@ -13,7 +13,7 @@ object Client {
         when (sendable) {
             is AddTab -> addTab(sendable)
             is RemoveTab -> removeTab(sendable.name)
-            is WidgetUpdate -> valueMap[sendable.name] = sendable.value
+            is WidgetUpdate -> valueMap[sendable.id] = sendable.value
         }
     }
 
@@ -27,13 +27,10 @@ object Client {
 
     /** The type of each widget. */
     private val widgetTypes = mutableMapOf<String, WidgetType>()
-    fun getTypeOfWidget(name: String) = widgetTypes[name]
-    fun setTypeOfWidget(name: String, type: WidgetType) {
-        widgetTypes[name] = type
-    }
+    fun getTypeOfWidget(id: String) = widgetTypes[id]
 
     /** Gets the widget data with a given name. */
-    fun getWidgetData(name: String) = valueMap[name]
+    fun getWidgetData(id: String) = valueMap[id]
 
     /** Updates the state of a widget by sending it to the robot code. */
     fun updateWidget(widgetUpdate: WidgetUpdate) = Ktor.send(widgetUpdate)
@@ -46,7 +43,7 @@ object Client {
 
     /** Adds a tab. */
     private fun addTab(sendable: AddTab) {
-        sendable.tab.data.forEach { setTypeOfWidget(it.name, it.type) }
+        sendable.tab.data.forEach { widgetTypes[it.id] = it.type }
         currentTabs[sendable.name] = sendable.tab
     }
 
@@ -56,7 +53,7 @@ object Client {
     }
 
     /** Gets the widgets that should be displayed on the given tab. */
-    fun getWidgetsOnTab(index: Int): List<TabWidget> {
+    fun getWidgetsOnTab(index: Int): List<WidgetDefinition> {
         return currentTabs.values.firstOrNull { it.index == index }?.data ?: emptyList()
     }
 }

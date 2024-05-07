@@ -13,18 +13,20 @@ fun mutableBooleanDashboardWidget(title: String, initialValue: Boolean, onDashbo
     return GenericWidget(title, initialValue) { it.toBoolean() }
 }
 
-class GenericWidget<T>(private val title: String, initialValue: T, private val getValue: (String) -> T) {
+class GenericWidget<T>(title: String, initialValue: T, private val getValue: (String) -> T) {
+    private val id = title.hashCode().toString()
+
     init {
-        Dashboard.updateWidget(WidgetUpdate(title, initialValue.toString()))
+        Dashboard.updateWidget(WidgetUpdate(id, initialValue.toString()))
     }
 
     operator fun getValue(thisRef: Any?, property: KProperty<*>): T {
-        return getValue(Dashboard.getWidgetData(title)!!.value)
+        return getValue(Dashboard.getWidgetData(id)!!.value)
     }
 
     operator fun setValue(thisRef: Any?, property: KProperty<*>, value: T) {
-        if (value != getValue(Dashboard.getWidgetData(title)!!.value)) {
-            Dashboard.updateWidget(WidgetUpdate(title, value.toString()))
+        if (value != getValue(Dashboard.getWidgetData(id)!!.value)) {
+            Dashboard.updateWidget(WidgetUpdate(id, value.toString()))
         }
     }
 }

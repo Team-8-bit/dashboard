@@ -10,9 +10,9 @@ import org.team9432.dashboard.shared.WidgetUpdate
 
 /** Boolean displayed as a toggleable switch. */
 @Composable
-fun ButtonWidget(name: String) {
+fun ButtonWidget(name: String, id: String) {
     Box(contentAlignment = Alignment.Center) {
-        Button(onClick = { Client.updateWidget(WidgetUpdate(name, "")) }) {
+        Button(onClick = { Client.updateWidget(WidgetUpdate(id, "")) }) {
             Text(name)
         }
     }

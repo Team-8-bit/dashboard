@@ -13,7 +13,7 @@ import androidx.compose.ui.unit.dp
 import org.team9432.dashboard.app.io.Client
 import org.team9432.dashboard.app.ui.TabBar
 import org.team9432.dashboard.app.ui.widgets.*
-import org.team9432.dashboard.shared.TabWidget
+import org.team9432.dashboard.shared.WidgetDefinition
 import org.team9432.dashboard.shared.WidgetType.*
 
 // Number of rows and columns to display
@@ -26,7 +26,7 @@ var widgetAreaX by mutableFloatStateOf(0F)
 
 /** Displays the given widgets. */
 @Composable
-fun DisplayScreen(widgets: List<TabWidget>) {
+fun DisplayScreen(widgets: List<WidgetDefinition>) {
     Column {
         TabBar()
         Surface(Modifier.fillMaxSize()) {
@@ -39,7 +39,7 @@ fun DisplayScreen(widgets: List<TabWidget>) {
 
 /** Displays a widget of a given size at the given position. */
 @Composable
-fun Widget(data: TabWidget) {
+fun Widget(data: WidgetDefinition) {
     val xPerUnit = widgetAreaX.pxToDp() / numberOfCols
     val yPerUnit = widgetAreaY.pxToDp() / numberOfRows
 
@@ -49,28 +49,28 @@ fun Widget(data: TabWidget) {
             .height(yPerUnit * data.rowsSpanned)
             .offset(x = xPerUnit * data.col, y = yPerUnit * data.row)
     ) {
-        if (data.name != "%empty") {
-            display(data.name)
+        if (data.id != "%empty") {
+            display(data.id, data.name)
         }
     }
 }
 
 /** Finds and displays the correct type of widget by the given name. */
 @Composable
-fun display(name: String) {
-    val value = Client.getWidgetData(name)
+fun display(id: String, name: String) {
+    val value = Client.getWidgetData(id)
 
     if (value == null) {
         TextWidget(name, "missing value")
         return
     }
 
-    when (Client.getTypeOfWidget(name)) {
+    when (Client.getTypeOfWidget(id)) {
         DisplayOnlyString -> TextWidget(name, value)
         DisplayOnlyBoolean -> ImmutableBooleanWidget(name, value.toBoolean())
-        WritableBoolean -> MutableBooleanWidget(name, value.toBoolean())
+        WritableBoolean -> MutableBooleanWidget(name, id, value.toBoolean())
         DisplayOnlyDouble -> TextWidget(name, value)
-        Button -> ButtonWidget(name)
+        Button -> ButtonWidget(name, id)
         null -> TextWidget(name, "missing value")
     }
 }

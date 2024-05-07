@@ -22,11 +22,11 @@ import org.team9432.dashboard.shared.WidgetUpdate
 
 /** Boolean displayed as a toggleable switch. */
 @Composable
-fun MutableBooleanWidget(name: String, value: Boolean) {
+fun MutableBooleanWidget(name: String, id: String, value: Boolean) {
     Column(horizontalAlignment = Alignment.CenterHorizontally) {
         Text(text = name, fontSize = 20.sp, textAlign = TextAlign.Center)
         Switch(checked = value, onCheckedChange = { isChecked ->
-            Client.updateWidget(WidgetUpdate(name, isChecked.toString()))
+            Client.updateWidget(WidgetUpdate(id, isChecked.toString()))
         })
     }
 }
