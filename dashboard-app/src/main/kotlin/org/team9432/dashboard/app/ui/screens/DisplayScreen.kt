@@ -12,10 +12,7 @@ import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.unit.dp
 import org.team9432.dashboard.app.io.Client
 import org.team9432.dashboard.app.ui.TabBar
-import org.team9432.dashboard.app.ui.widgets.ImmutableBooleanWidget
-import org.team9432.dashboard.app.ui.widgets.MutableBooleanWidget
-import org.team9432.dashboard.app.ui.widgets.TextWidget
-import org.team9432.dashboard.app.ui.widgets.WidgetBase
+import org.team9432.dashboard.app.ui.widgets.*
 import org.team9432.dashboard.shared.*
 
 // Number of rows and columns to display
@@ -65,7 +62,7 @@ fun display(name: String) {
         is DisplayOnlyBooleanData -> ImmutableBooleanWidget(value.name, value.value)
         is WritableBooleanData -> MutableBooleanWidget(value.name, value.value)
         is DisplayOnlyDoubleData -> TextWidget(value.name, value.value.toString())
-
+        is ButtonData -> ButtonWidget(value.name)
         null -> TextWidget(name, "missing value")
     }
 }

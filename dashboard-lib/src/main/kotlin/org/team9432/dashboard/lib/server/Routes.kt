@@ -16,7 +16,12 @@ fun Application.configureRoutes() {
         get("/currentstate") {
             val widgetData = Dashboard.getAllWidgetData() as List<Sendable>
             val tabData = Dashboard.getAllTabs().map { AddTab(it.name, it) } as List<Sendable>
-            call.respond(widgetData + tabData)
+
+            try {
+                call.respond(widgetData + tabData)
+            } catch (e: Exception) {
+                println("Error when sending initial data: ${e.message}")
+            }
         }
     }
 }

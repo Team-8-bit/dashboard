@@ -27,12 +27,32 @@ object Dashboard {
     fun processInformation(sendable: Sendable) {
         when (sendable) {
             is WidgetData -> {
-                currentValues[sendable.name] = sendable
-                callbacks[sendable.name]?.invoke(sendable)
+                when (sendable) {
+                    is ButtonData -> {
+                        callbacks[sendable.name]?.invoke(sendable)
+                    }
+
+                    is DisplayOnlyDoubleData, is DisplayOnlyStringData, is DisplayOnlyBooleanData -> {
+                        currentValues[sendable.name] = sendable
+                    }
+
+                    is WritableBooleanData -> {
+                        currentValues[sendable.name] = sendable
+                        callbacks[sendable.name]?.invoke(sendable)
+                    }
+                }
             }
 
             else -> {}
         }
+    }
+
+
+    /* -------- Buttons -------- */
+
+    fun registerButton(name: String, onClick: () -> Unit) {
+        callbacks[name] = { onClick() }
+        updateWidget(ButtonData(name))
     }
 
 

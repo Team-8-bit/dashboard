@@ -10,7 +10,7 @@ sealed interface WidgetData: Sendable {
 }
 
 
-/* -------- Immutable Widgets -------- */
+/* -------- Display Only -------- */
 
 /** Request to update the value of a display only string widget. */
 @Serializable
@@ -25,7 +25,7 @@ data class DisplayOnlyBooleanData(override val name: String, val value: Boolean)
 data class DisplayOnlyDoubleData(override val name: String, val value: Double): WidgetData
 
 
-/* -------- Mutable Widgets -------- */
+/* -------- Writable -------- */
 
 /** Request to update the value of a writable boolean widget. */
 @Serializable

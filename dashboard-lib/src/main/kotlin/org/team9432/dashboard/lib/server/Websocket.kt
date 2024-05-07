@@ -29,6 +29,8 @@ internal object Websocket {
                         sendToAll(value)
                         Dashboard.processInformation(value)
                     }
+                } catch (e: Exception) {
+                    println("Websocket error: ${e.message}")
                 } finally {
                     connections -= this
                 }
