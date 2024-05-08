@@ -28,7 +28,7 @@ object Dashboard {
         when (sendable) {
             is WidgetUpdate -> {
                 currentValues[sendable.id] = sendable
-                callbacks[sendable.id]?.invoke(sendable)
+                callbacks[sendable.id]?.invoke(sendable.value)
             }
 
             else -> {}

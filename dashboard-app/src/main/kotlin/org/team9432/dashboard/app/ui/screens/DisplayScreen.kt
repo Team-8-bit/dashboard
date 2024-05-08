@@ -54,7 +54,7 @@ fun Widget(widget: WidgetDefinition, state: MutableState<String>?, position: Wid
         if (state != null) {
             display(widget.name, state.value, widget.type) { Client.updateWidget(widget.id, it) }
         } else {
-            TextWidget(widget.name, "missing value")
+            ReadableStringWidget(widget.name, "missing value")
         }
     }
 }
@@ -63,10 +63,11 @@ fun Widget(widget: WidgetDefinition, state: MutableState<String>?, position: Wid
 @Composable
 fun display(name: String, value: String, widgetType: WidgetType, sendUpdate: (String) -> Unit) {
     when (widgetType) {
-        DisplayOnlyString -> TextWidget(name, value)
-        DisplayOnlyBoolean -> ImmutableBooleanWidget(name, value.toBoolean())
-        WritableBoolean -> MutableBooleanWidget(name, value.toBoolean(), onCheckedChange = { sendUpdate(it.toString()) })
-        DisplayOnlyDouble -> TextWidget(name, value)
+        ReadableString -> ReadableStringWidget(name, value)
+        ReadableBoolean -> ReadableBooleanWidget(name, value.toBoolean())
+        WritableBoolean -> WritableBooleanWidget(name, value.toBoolean(), onCheckedChange = { sendUpdate(it.toString()) })
+        ReadableDouble -> ReadableStringWidget(name, value)
+        WritableString -> WritableStringWidget(name, value, onValueChange = { sendUpdate(it) })
         Button -> ButtonWidget(name, onClick = { sendUpdate("") })
     }
 }

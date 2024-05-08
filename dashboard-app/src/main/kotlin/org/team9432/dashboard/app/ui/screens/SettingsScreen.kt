@@ -44,7 +44,8 @@ private fun StringConfig(title: String, currentValue: String, numberOnly: Boolea
         val focusManager = LocalFocusManager.current
 
         OutlinedTextField(
-            currentString, { newValue ->
+            value = currentString,
+            onValueChange = { newValue ->
                 isError = numberOnly && !newValue.all { it.isDigit() }
                 currentString = newValue
             },

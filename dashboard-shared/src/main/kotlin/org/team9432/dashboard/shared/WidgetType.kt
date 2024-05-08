@@ -6,9 +6,10 @@ import kotlinx.serialization.Serializable
 data class WidgetUpdate(val id: String, val value: String): Sendable
 
 enum class WidgetType {
-    DisplayOnlyString,
-    DisplayOnlyBoolean,
-    DisplayOnlyDouble,
+    ReadableString,
+    ReadableBoolean,
+    ReadableDouble,
     WritableBoolean,
+    WritableString,
     Button,
 }

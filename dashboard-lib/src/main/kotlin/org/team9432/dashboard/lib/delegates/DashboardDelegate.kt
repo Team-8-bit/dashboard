@@ -4,13 +4,18 @@ import org.team9432.dashboard.lib.Dashboard
 import org.team9432.dashboard.shared.WidgetUpdate
 import kotlin.reflect.KProperty
 
-fun immutableStringDashboardWidget(title: String, initialValue: String) = GenericWidget(title, initialValue) { it }
-fun immutableBooleanDashboardWidget(title: String, initialValue: Boolean) = GenericWidget(title, initialValue) { it.toBoolean() }
-fun immutableDoubleDashboardWidget(title: String, initialValue: Double) = GenericWidget(title, initialValue) { it.toDouble() }
+fun readableStringDashboardWidget(title: String, initialValue: String) = GenericWidget(title, initialValue) { it }
+fun readableBooleanDashboardWidget(title: String, initialValue: Boolean) = GenericWidget(title, initialValue) { it.toBoolean() }
+fun readableDoubleDashboardWidget(title: String, initialValue: Double) = GenericWidget(title, initialValue) { it.toDouble() }
 
-fun mutableBooleanDashboardWidget(title: String, initialValue: Boolean, onDashboardChange: ((Boolean) -> Unit)? = null): GenericWidget<Boolean> {
-    if (onDashboardChange != null) Dashboard.registerCallbackForWidget(title) { onDashboardChange.invoke(it as Boolean) }
+fun writableBooleanDashboardWidget(title: String, initialValue: Boolean, onDashboardChange: ((Boolean) -> Unit)? = null): GenericWidget<Boolean> {
+    if (onDashboardChange != null) Dashboard.registerCallbackForWidget(title.hashCode().toString()) { onDashboardChange.invoke(it as Boolean) }
     return GenericWidget(title, initialValue) { it.toBoolean() }
+}
+
+fun writableStringDashboardWidget(title: String, initialValue: String, onDashboardChange: ((String) -> Unit)? = null): GenericWidget<String> {
+    if (onDashboardChange != null) Dashboard.registerCallbackForWidget(title.hashCode().toString()) { onDashboardChange.invoke(it as String) }
+    return GenericWidget(title, initialValue) { it }
 }
 
 class GenericWidget<T>(title: String, initialValue: T, private val getValue: (String) -> T) {
