@@ -17,17 +17,13 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import org.team9432.dashboard.app.io.Client
-import org.team9432.dashboard.shared.WidgetUpdate
 
 /** Boolean displayed as a toggleable switch. */
 @Composable
-fun MutableBooleanWidget(name: String, id: String, value: Boolean) {
+fun MutableBooleanWidget(name: String, value: Boolean, onCheckedChange: (Boolean) -> Unit) {
     Column(horizontalAlignment = Alignment.CenterHorizontally) {
         Text(text = name, fontSize = 20.sp, textAlign = TextAlign.Center)
-        Switch(checked = value, onCheckedChange = { isChecked ->
-            Client.updateWidget(WidgetUpdate(id, isChecked.toString()))
-        })
+        Switch(checked = value, onCheckedChange = onCheckedChange)
     }
 }
 

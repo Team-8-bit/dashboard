@@ -12,8 +12,12 @@ data class RemoveTab(val name: String): Sendable
 
 /** Represents a tab being sent to the dashboard. */
 @Serializable
-data class Tab(val name: String, val index: Int, val data: List<WidgetDefinition>)
+data class Tab(val name: String, val index: Int, val numberOfRows: Int, val numberOfCols: Int, val widgets: List<Pair<WidgetDefinition, WidgetPosition>>)
+
+/** Represents all the information about a widget. */
+@Serializable
+data class WidgetDefinition(val name: String, val id: String, val type: WidgetType)
 
 /** Represents a widget and its size and position on a given tab. */
 @Serializable
-data class WidgetDefinition(val row: Int, val col: Int, val name: String, val id: String, val type: WidgetType, val rowsSpanned: Int, val colsSpanned: Int)
+data class WidgetPosition(val row: Int, val col: Int, val rowsSpanned: Int, val colsSpanned: Int)

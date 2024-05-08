@@ -2,10 +2,16 @@ package org.team9432.dashboard.app.ui.screens
 
 
 import androidx.compose.foundation.layout.*
+import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material3.*
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.focus.onFocusChanged
+import androidx.compose.ui.input.key.Key
+import androidx.compose.ui.input.key.key
+import androidx.compose.ui.input.key.onKeyEvent
+import androidx.compose.ui.platform.LocalFocusManager
 import org.team9432.dashboard.app.io.Client
 import org.team9432.dashboard.app.io.Config
 import org.team9432.dashboard.app.ui.AppState
@@ -33,19 +39,25 @@ private fun ButtonConfig(title: String, onClick: () -> Unit) {
 private fun StringConfig(title: String, currentValue: String, numberOnly: Boolean = false, onChange: (String) -> Unit) {
     var currentString by remember { mutableStateOf(currentValue) }
     var isError by remember { mutableStateOf(false) }
+    var wasFocused by remember { mutableStateOf(false) }
     ConfigBase(title) {
+        val focusManager = LocalFocusManager.current
+
         OutlinedTextField(
             currentString, { newValue ->
-                if (numberOnly && !newValue.all { it.isDigit() }) {
-                    isError = true
-                } else {
-                    isError = false
-                    onChange(newValue)
-                }
+                isError = numberOnly && !newValue.all { it.isDigit() }
                 currentString = newValue
             },
             singleLine = true,
-            isError = isError
+            isError = isError,
+            keyboardOptions = KeyboardOptions(autoCorrect = false),
+            modifier = Modifier.onKeyEvent {
+                if (it.key == Key.Enter) focusManager.clearFocus()
+                false
+            }.onFocusChanged {
+                if (!it.isFocused && wasFocused) onChange(currentString)
+                wasFocused = it.isFocused
+            }
         )
     }
 }

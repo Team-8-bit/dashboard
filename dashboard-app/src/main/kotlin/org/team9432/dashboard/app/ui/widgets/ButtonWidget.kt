@@ -5,14 +5,12 @@ import androidx.compose.material3.Button
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
-import org.team9432.dashboard.app.io.Client
-import org.team9432.dashboard.shared.WidgetUpdate
 
 /** Boolean displayed as a toggleable switch. */
 @Composable
-fun ButtonWidget(name: String, id: String) {
+fun ButtonWidget(name: String, onClick: () -> Unit) {
     Box(contentAlignment = Alignment.Center) {
-        Button(onClick = { Client.updateWidget(WidgetUpdate(id, "")) }) {
+        Button(onClick = onClick) {
             Text(name)
         }
     }

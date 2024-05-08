@@ -2,16 +2,17 @@ package org.team9432.dashboard.lib.layout
 
 import org.team9432.dashboard.shared.Tab
 import org.team9432.dashboard.shared.WidgetDefinition
+import org.team9432.dashboard.shared.WidgetPosition
 import org.team9432.dashboard.shared.WidgetType
 
-class DashboardTab(rows: Int, cols: Int, val index: Int, val name: String = "Unnamed") {
+class DashboardTab(private val rows: Int, private val cols: Int, private val index: Int, private val name: String) {
     private data class Coordinate(val row: Int, val col: Int)
 
     private val rowIndices = 0..<rows
     private val colIndices = 0..<cols
 
     private val usedCoordinates = mutableMapOf<Coordinate, String>()
-    private val registeredWidgets = mutableListOf<WidgetDefinition>()
+    private val registeredWidgets = mutableListOf<Pair<WidgetDefinition, WidgetPosition>>()
 
     fun addWidget(row: Int, col: Int, name: String, type: WidgetType, rowsSpanned: Int = 1, colsSpanned: Int = 1) {
         require(row + (rowsSpanned - 1) in rowIndices && col + (colsSpanned - 1) in colIndices) { "This widget does not fit within the grid!" }
@@ -36,8 +37,8 @@ class DashboardTab(rows: Int, cols: Int, val index: Int, val name: String = "Unn
             usedCoordinates[it] = name
         }
 
-        registeredWidgets.add(WidgetDefinition(row, col, name, name.hashCode().toString(), type, rowsSpanned, colsSpanned))
+        registeredWidgets.add(WidgetDefinition(name, name.hashCode().toString(), type) to WidgetPosition(row, col, rowsSpanned, colsSpanned))
     }
 
-    fun getSendable(): Tab = Tab(name, index, registeredWidgets)
+    fun getSendable() = Tab(name, index, rows, cols, registeredWidgets)
 }

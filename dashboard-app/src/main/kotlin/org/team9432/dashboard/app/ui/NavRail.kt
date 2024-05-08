@@ -10,20 +10,21 @@ import androidx.compose.material3.*
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
+import org.team9432.dashboard.app.Screen
 
 @Composable
-fun NavRail() {
+fun NavRail(currentScreen: Screen, onScreenChange: (Screen) -> Unit) {
     NavigationRail(containerColor = MaterialTheme.colorScheme.surfaceVariant) {
         NavigationRailItem(
             icon = { Icon(Icons.Default.Analytics, contentDescription = "View Data") },
-            selected = AppState.screen == AppState.Screen.DATA_VIEW,
-            onClick = { AppState.screen = AppState.Screen.DATA_VIEW },
+            selected = currentScreen == Screen.DATA_VIEW,
+            onClick = { onScreenChange(Screen.DATA_VIEW) },
             label = { Text(text = "Data View") }
         )
         NavigationRailItem(
             icon = { Icon(Icons.Default.Settings, contentDescription = "Settings") },
-            selected = AppState.screen == AppState.Screen.SETTINGS,
-            onClick = { AppState.screen = AppState.Screen.SETTINGS },
+            selected = currentScreen == Screen.SETTINGS,
+            onClick = { onScreenChange(Screen.SETTINGS) },
             label = { Text(text = "Settings") }
         )
         Spacer(Modifier.weight(1F))
