@@ -9,13 +9,18 @@ fun readableBooleanDashboardWidget(title: String, initialValue: Boolean) = Gener
 fun readableDoubleDashboardWidget(title: String, initialValue: Double) = GenericWidget(title, initialValue) { it.toDouble() }
 
 fun writableBooleanDashboardWidget(title: String, initialValue: Boolean, onDashboardChange: ((Boolean) -> Unit)? = null): GenericWidget<Boolean> {
-    if (onDashboardChange != null) Dashboard.registerCallbackForWidget(title.hashCode().toString()) { onDashboardChange.invoke(it as Boolean) }
+    if (onDashboardChange != null) Dashboard.registerCallbackForWidget(title.hashCode().toString()) { onDashboardChange.invoke(it.toBoolean()) }
     return GenericWidget(title, initialValue) { it.toBoolean() }
 }
 
 fun writableStringDashboardWidget(title: String, initialValue: String, onDashboardChange: ((String) -> Unit)? = null): GenericWidget<String> {
-    if (onDashboardChange != null) Dashboard.registerCallbackForWidget(title.hashCode().toString()) { onDashboardChange.invoke(it as String) }
+    if (onDashboardChange != null) Dashboard.registerCallbackForWidget(title.hashCode().toString()) { onDashboardChange.invoke(it) }
     return GenericWidget(title, initialValue) { it }
+}
+
+fun writableDoubleDashboardWidget(title: String, initialValue: Double, onDashboardChange: ((Double) -> Unit)? = null): GenericWidget<Double> {
+    if (onDashboardChange != null) Dashboard.registerCallbackForWidget(title.hashCode().toString()) { onDashboardChange.invoke(it.toDouble()) }
+    return GenericWidget(title, initialValue) { it.toDouble() }
 }
 
 class GenericWidget<T>(title: String, initialValue: T, private val getValue: (String) -> T) {

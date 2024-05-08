@@ -65,9 +65,10 @@ fun display(name: String, value: String, widgetType: WidgetType, sendUpdate: (St
     when (widgetType) {
         ReadableString -> ReadableStringWidget(name, value)
         ReadableBoolean -> ReadableBooleanWidget(name, value.toBoolean())
-        WritableBoolean -> WritableBooleanWidget(name, value.toBoolean(), onCheckedChange = { sendUpdate(it.toString()) })
         ReadableDouble -> ReadableStringWidget(name, value)
+        WritableBoolean -> WritableBooleanWidget(name, value.toBoolean(), onCheckedChange = { sendUpdate(it.toString()) })
         WritableString -> WritableStringWidget(name, value, onValueChange = { sendUpdate(it) })
+        WritableDouble -> WritableDoubleWidget(name, value.toDouble()) { sendUpdate(it.toString()) }
         Button -> ButtonWidget(name, onClick = { sendUpdate("") })
     }
 }

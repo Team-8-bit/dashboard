@@ -11,5 +11,6 @@ enum class WidgetType {
     ReadableDouble,
     WritableBoolean,
     WritableString,
+    WritableDouble,
     Button,
 }

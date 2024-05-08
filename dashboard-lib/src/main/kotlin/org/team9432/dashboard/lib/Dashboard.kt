@@ -18,9 +18,9 @@ object Dashboard {
         Server.run()
     }
 
-    private val callbacks = mutableMapOf<String, (Any) -> Unit>()
+    private val callbacks = mutableMapOf<String, (String) -> Unit>()
 
-    fun registerCallbackForWidget(name: String, callback: (Any) -> Unit) {
+    fun registerCallbackForWidget(name: String, callback: (String) -> Unit) {
         callbacks[name] = callback
     }
 
