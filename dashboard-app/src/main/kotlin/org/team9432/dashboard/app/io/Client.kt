@@ -1,27 +1,35 @@
 package org.team9432.dashboard.app.io
 
-import androidx.compose.runtime.MutableState
 import androidx.compose.runtime.mutableStateMapOf
-import androidx.compose.runtime.mutableStateOf
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.coroutineScope
+import kotlinx.coroutines.launch
+import org.team9432.dashboard.app.ui.widgets.*
 import org.team9432.dashboard.shared.*
 
 /** The interface between the app and the networking code. Also tracks the current state of all widgets and tabs. */
 object Client {
+    private lateinit var coroutineScope: CoroutineScope
+
     /** Starts and runs the client, must be called before anything else. */
-    suspend fun run() = Ktor.run()
+    suspend fun run() = coroutineScope {
+        coroutineScope = this
+        launch {
+            Ktor.run()
+        }
+    }
 
     /** Process a newly received piece of information. */
     fun processInformation(sendable: Sendable) {
         when (sendable) {
             is Tab -> addTab(sendable)
-            is WidgetUpdateRequest -> valueMap.getOrPut(sendable.id, defaultValue = { mutableStateOf(sendable.update) }).value = sendable.update
-            is Widget -> createWidget(sendable)
+            is WidgetUpdateRequest -> allWidgets[sendable.id]?.acceptUpdate(sendable.update)
+            is CreateWidget -> createWidget(sendable)
             is InitialUpdateMessage -> {}
         }
     }
 
     fun reset() {
-        valueMap.clear()
         widgetsByTab.clear()
         currentTabs.clear()
     }
@@ -31,24 +39,34 @@ object Client {
 
     /* -------- Widgets -------- */
 
-    /** Map of current widget states. */
-    private val valueMap = mutableMapOf<String, MutableState<WidgetUpdate>>()
-
-    /** Gets the widget data with a given name. */
-    fun getWidgetData(id: String) = valueMap[id]
-
     /** Updates the state of a widget by sending it to the robot code. */
     fun updateWidget(id: String, update: WidgetUpdate) = Ktor.send(WidgetUpdateRequest(id, update))
 
-    fun createWidget(widget: Widget) {
-        widgetsByTab[widget.position.tab]?.add(widget)
+    private val allWidgets = mutableMapOf<String, WidgetBase>()
+
+    private fun createWidget(data: CreateWidget) {
+        val widgetClass: WidgetBase = when (data.type) {
+            WidgetType.ReadableString -> ReadableStringWidget(data)
+            WidgetType.ReadableBoolean -> ReadableBooleanWidget(data)
+            WidgetType.ReadableDouble -> ReadableDoubleWidget(data)
+            WidgetType.WritableString -> WritableStringWidget(data)
+            WidgetType.WritableBoolean -> WritableBooleanWidget(data)
+            WidgetType.WritableDouble -> WritableDoubleWidget(data)
+            WidgetType.Button -> ButtonWidget(data)
+            WidgetType.Dropdown -> DropdownWidget(data)
+        }
+
+        widgetClass.acceptUpdate(data.initialUpdate)
+
+        allWidgets[data.id] = widgetClass
+        widgetsByTab[data.position.tab]?.add(widgetClass)
     }
 
     /* -------- Tabs -------- */
 
     /** A map of tab to the widgets that are on it. */
-    private val widgetsByTab = mutableMapOf<String, MutableList<Widget>>()
-    fun getWidgetsOnTab(tab: String) = widgetsByTab[tab] ?: emptyList()
+    private val widgetsByTab = mutableMapOf<String, MutableList<WidgetBase>>()
+    fun getWidgetsOnTab(tab: String) = widgetsByTab[tab]?.toList() ?: emptyList()
 
     /** A map of the current tabs. */
     private val currentTabs = mutableStateMapOf<Int, Tab>()
@@ -59,5 +77,5 @@ object Client {
         widgetsByTab[tab.name] = mutableListOf()
     }
 
-    fun getCurrentTabs() = currentTabs.values.toList()
+    fun getCurrentTabs() = currentTabs
 }

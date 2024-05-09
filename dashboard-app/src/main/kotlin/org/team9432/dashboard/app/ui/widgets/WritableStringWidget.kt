@@ -16,35 +16,48 @@ import androidx.compose.ui.platform.LocalFocusManager
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import org.team9432.dashboard.app.ui.widgets.util.SafeMutableState
+import org.team9432.dashboard.shared.CreateWidget
+import org.team9432.dashboard.shared.StringUpdate
+import org.team9432.dashboard.shared.WidgetUpdate
 
-/** Text widget. */
-@Composable
-fun WritableStringWidget(name: String, value: String, onValueChange: (String) -> Unit) {
-    Column(horizontalAlignment = Alignment.CenterHorizontally) {
-        Text(text = name, fontSize = 20.sp, textAlign = TextAlign.Center)
+class WritableStringWidget(data: CreateWidget): WidgetBase(data) {
+    private var currentValue by SafeMutableState<String?>(null)
 
-        var wasFocused by remember { mutableStateOf(false) }
-        val focusManager = LocalFocusManager.current
+    @Composable
+    override fun display() {
+        val value = currentValue ?: return
 
-        var currentInput by remember { mutableStateOf<String?>(null) }
+        Column(horizontalAlignment = Alignment.CenterHorizontally) {
+            Text(text = data.name, fontSize = 20.sp, textAlign = TextAlign.Center)
 
-        OutlinedTextField(
-            value = currentInput ?: value,
-            onValueChange = { newValue ->
-                currentInput = newValue
-            },
-            singleLine = true,
-            keyboardOptions = KeyboardOptions(autoCorrect = false),
-            modifier = Modifier.onKeyEvent {
-                if (it.key == Key.Enter) focusManager.clearFocus()
-                false
-            }.onFocusChanged {
-                if (!it.isFocused && wasFocused) { // When unfocused
-                    currentInput?.let { onValueChange(it) }
-                    currentInput = null
-                }
-                wasFocused = it.isFocused
-            }.padding(10.dp)
-        )
+            var wasFocused by remember { mutableStateOf(false) }
+            val focusManager = LocalFocusManager.current
+
+            var currentInput by remember { mutableStateOf<String?>(null) }
+
+            OutlinedTextField(
+                value = currentInput ?: value,
+                onValueChange = { newValue ->
+                    currentInput = newValue
+                },
+                singleLine = true,
+                keyboardOptions = KeyboardOptions(autoCorrect = false),
+                modifier = Modifier.onKeyEvent {
+                    if (it.key == Key.Enter) focusManager.clearFocus()
+                    false
+                }.onFocusChanged {
+                    if (!it.isFocused && wasFocused) { // When unfocused
+                        currentInput?.let { sendUpdate(StringUpdate(it)) }
+                        currentInput = null
+                    }
+                    wasFocused = it.isFocused
+                }.padding(10.dp)
+            )
+        }
+    }
+
+    override fun acceptUpdate(update: WidgetUpdate) {
+        if (update is StringUpdate) currentValue = update.value
     }
 }

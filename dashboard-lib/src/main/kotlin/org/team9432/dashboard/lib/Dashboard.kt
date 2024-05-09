@@ -27,7 +27,7 @@ object Dashboard {
     fun processInformation(sendable: Sendable) {
         when (sendable) {
             is WidgetUpdateRequest -> {
-                currentValues[sendable.id] = sendable
+                currentValues[sendable.id] = sendable.update
                 callbacks[sendable.id]?.invoke(sendable.update)
             }
 
@@ -36,33 +36,42 @@ object Dashboard {
     }
 
 
+    /* -------- Dropdown -------- */
+
+    fun registerDropdown(title: String, options: List<String>, row: Int, col: Int, tab: String, rowsSpanned: Int = 1, colsSpanned: Int = 1, onValueSelected: (String) -> Unit) {
+        val id = title.hashCode().toString()
+        callbacks[id] = { onValueSelected((it as DropdownSelected).option) }
+        createWidget(title, WidgetType.Dropdown, WidgetPosition(row, col, tab, rowsSpanned, colsSpanned), DropdownUpdate(options))
+    }
+
+
     /* -------- Buttons -------- */
 
     fun registerButton(title: String, row: Int, col: Int, tab: String, rowsSpanned: Int = 1, colsSpanned: Int = 1, onClick: () -> Unit) {
         val id = title.hashCode().toString()
         callbacks[id] = { onClick() }
-        createWidget(title, WidgetType.Button, WidgetPosition(row, col, tab, rowsSpanned, colsSpanned))
-        updateWidget(WidgetUpdateRequest(id, ButtonUpdate))
+        createWidget(title, WidgetType.Button, WidgetPosition(row, col, tab, rowsSpanned, colsSpanned), ButtonUpdate)
     }
 
 
     /* -------- Widgets -------- */
 
-    private val currentValues = mutableMapOf<String, WidgetUpdateRequest>()
+    private val currentValues = mutableMapOf<String, WidgetUpdate>()
 
     fun updateWidget(value: WidgetUpdateRequest) {
-        currentValues[value.id] = value
+        currentValues[value.id] = value.update
         Server.sendToAll(value)
     }
 
     fun getWidgetData(name: String) = currentValues[name]
-    fun getAllWidgetData() = currentValues.values.toList()
+    fun getAllWidgetData() = currentValues.map { WidgetUpdateRequest(it.key, it.value) }
 
-    private val createdWidgets = mutableMapOf<String, Widget>()
+    private val createdWidgets = mutableMapOf<String, CreateWidget>()
     fun getAllWidgets() = createdWidgets.values.toList()
 
-    fun createWidget(name: String, type: WidgetType, position: WidgetPosition, id: String = name.hashCode().toString()) {
-        val widget = Widget(name, type, position, id)
+    fun createWidget(name: String, type: WidgetType, position: WidgetPosition, initialUpdate: WidgetUpdate, id: String = name.hashCode().toString()) {
+        val widget = CreateWidget(name, type, position, id, initialUpdate)
+        currentValues[id] = initialUpdate
         createdWidgets[id] = widget
         Server.sendToAll(widget)
     }

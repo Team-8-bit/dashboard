@@ -20,6 +20,12 @@ data class DoubleUpdate(val value: Double): WidgetUpdate
 @Serializable
 data object ButtonUpdate: WidgetUpdate
 
+@Serializable
+data class DropdownUpdate(val options: List<String>): WidgetUpdate
+
+@Serializable
+data class DropdownSelected(val option: String): WidgetUpdate
+
 enum class WidgetType {
     ReadableString,
     ReadableBoolean,
@@ -28,4 +34,5 @@ enum class WidgetType {
     WritableBoolean,
     WritableDouble,
     Button,
+    Dropdown
 }

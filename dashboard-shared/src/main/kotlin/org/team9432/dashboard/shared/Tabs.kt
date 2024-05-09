@@ -6,11 +6,12 @@ import kotlinx.serialization.SerialName
 import kotlinx.serialization.Serializable
 
 @Serializable
-data class Widget @OptIn(ExperimentalSerializationApi::class) constructor(
+data class CreateWidget @OptIn(ExperimentalSerializationApi::class) constructor(
     val name: String,
     @SerialName("widgetType") val type: WidgetType,
     val position: WidgetPosition,
     @EncodeDefault val id: String = name.hashCode().toString(),
+    val initialUpdate: WidgetUpdate,
 ): Sendable
 
 /** Represents a tab being sent to the dashboard. */

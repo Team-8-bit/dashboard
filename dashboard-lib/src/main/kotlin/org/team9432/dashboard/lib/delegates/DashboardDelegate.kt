@@ -19,16 +19,15 @@ class GenericWidget<T>(
 ) {
 
     init {
-        Dashboard.createWidget(name, type, WidgetPosition(row, col, tab, rowsSpanned, colsSpanned), id)
-        Dashboard.updateWidget(WidgetUpdateRequest(id, getUpdate(initialValue)))
+        Dashboard.createWidget(name, type, WidgetPosition(row, col, tab, rowsSpanned, colsSpanned), getUpdate(initialValue), id)
     }
 
     operator fun getValue(thisRef: Any?, property: KProperty<*>): T {
-        return getValue(Dashboard.getWidgetData(id)!!.update)
+        return getValue(Dashboard.getWidgetData(id)!!)
     }
 
     operator fun setValue(thisRef: Any?, property: KProperty<*>, value: T) {
-        if (value != getValue(Dashboard.getWidgetData(id)!!.update)) {
+        if (value != getValue(Dashboard.getWidgetData(id)!!)) {
             Dashboard.updateWidget(WidgetUpdateRequest(id, getUpdate(value)))
         }
     }
