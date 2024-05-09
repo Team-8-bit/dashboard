@@ -35,25 +35,6 @@ object Dashboard {
         }
     }
 
-
-    /* -------- Dropdown -------- */
-
-    fun registerDropdown(title: String, options: List<String>, row: Int, col: Int, tab: String, rowsSpanned: Int = 1, colsSpanned: Int = 1, onValueSelected: (String) -> Unit) {
-        val id = title.hashCode().toString()
-        callbacks[id] = { onValueSelected((it as DropdownSelected).option) }
-        createWidget(title, WidgetType.Dropdown, WidgetPosition(row, col, tab, rowsSpanned, colsSpanned), DropdownUpdate(options))
-    }
-
-
-    /* -------- Buttons -------- */
-
-    fun registerButton(title: String, row: Int, col: Int, tab: String, rowsSpanned: Int = 1, colsSpanned: Int = 1, onClick: () -> Unit) {
-        val id = title.hashCode().toString()
-        callbacks[id] = { onClick() }
-        createWidget(title, WidgetType.Button, WidgetPosition(row, col, tab, rowsSpanned, colsSpanned), ButtonUpdate)
-    }
-
-
     /* -------- Widgets -------- */
 
     private val currentValues = mutableMapOf<String, WidgetUpdate>()
