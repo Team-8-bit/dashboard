@@ -50,8 +50,8 @@ object Dashboard {
     private val createdWidgets = mutableMapOf<String, CreateWidget>()
     fun getAllWidgets() = createdWidgets.values.toList()
 
-    fun createWidget(name: String, type: WidgetType, position: WidgetPosition, initialUpdate: WidgetUpdate, id: String = name.hashCode().toString()) {
-        val widget = CreateWidget(name, type, position, id, initialUpdate)
+    fun createWidget(name: String, type: WidgetType, vararg positions: WidgetPosition, initialUpdate: WidgetUpdate, id: String = name.hashCode().toString()) {
+        val widget = CreateWidget(name, type, positions = positions, id, initialUpdate)
         currentValues[id] = initialUpdate
         createdWidgets[id] = widget
         Server.sendToAll(widget)

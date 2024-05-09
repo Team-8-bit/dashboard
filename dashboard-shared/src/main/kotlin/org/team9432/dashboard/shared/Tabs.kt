@@ -6,10 +6,10 @@ import kotlinx.serialization.SerialName
 import kotlinx.serialization.Serializable
 
 @Serializable
-data class CreateWidget @OptIn(ExperimentalSerializationApi::class) constructor(
+class CreateWidget @OptIn(ExperimentalSerializationApi::class) constructor(
     val name: String,
     @SerialName("widgetType") val type: WidgetType,
-    val position: WidgetPosition,
+    vararg val positions: WidgetPosition,
     @EncodeDefault val id: String = name.hashCode().toString(),
     val initialUpdate: WidgetUpdate,
 ): Sendable

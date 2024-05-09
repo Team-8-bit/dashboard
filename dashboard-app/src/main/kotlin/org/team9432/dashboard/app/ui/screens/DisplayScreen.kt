@@ -37,8 +37,10 @@ private fun WidgetArea(tab: Tab) {
             val yPerUnit = widgetAreaY.pxToDp() / tab.numberOfRows
 
             Client.getWidgetsOnTab(tab.name).forEach {
-                WidgetContainer(it.data.position, xPerUnit, yPerUnit) {
-                    it.display()
+                it.data.positions.forEach { position ->
+                    WidgetContainer(position, xPerUnit, yPerUnit) {
+                        it.display()
+                    }
                 }
             }
         }

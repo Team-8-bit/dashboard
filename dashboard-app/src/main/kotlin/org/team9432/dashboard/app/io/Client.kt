@@ -59,7 +59,7 @@ object Client {
         widgetClass.acceptUpdate(data.initialUpdate)
 
         allWidgets[data.id] = widgetClass
-        widgetsByTab[data.position.tab]?.add(widgetClass)
+        data.positions.forEach { widgetsByTab[it.tab]?.add(widgetClass) }
     }
 
     /* -------- Tabs -------- */

@@ -11,18 +11,14 @@ class GenericWidget<T>(
     name: String,
     type: WidgetType,
     initialValue: T,
-    row: Int,
-    col: Int,
-    tab: String,
-    rowsSpanned: Int = 1,
-    colsSpanned: Int = 1,
+    vararg positions: WidgetPosition,
     private val getValue: (WidgetUpdate) -> T,
     private val getUpdate: (T) -> WidgetUpdate,
     private val id: String = name.hashCode().toString(),
 ) {
 
     init {
-        Dashboard.createWidget(name, type, WidgetPosition(row, col, tab, rowsSpanned, colsSpanned), getUpdate(initialValue), id)
+        Dashboard.createWidget(name, type, positions = positions, getUpdate(initialValue), id)
     }
 
     operator fun getValue(thisRef: Any?, property: KProperty<*>): T {
