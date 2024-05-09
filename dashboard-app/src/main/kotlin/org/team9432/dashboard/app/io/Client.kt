@@ -13,10 +13,17 @@ object Client {
     /** Process a newly received piece of information. */
     fun processInformation(sendable: Sendable) {
         when (sendable) {
-            is AddTab -> addTab(sendable)
-            is RemoveTab -> removeTab(sendable.name)
-            is WidgetUpdate -> valueMap.getOrPut(sendable.id, { mutableStateOf(sendable.value) }).value = sendable.value
+            is Tab -> addTab(sendable)
+            is WidgetUpdateRequest -> valueMap.getOrPut(sendable.id, defaultValue = { mutableStateOf(sendable.update) }).value = sendable.update
+            is Widget -> createWidget(sendable)
+            is InitialUpdateMessage -> {}
         }
+    }
+
+    fun reset() {
+        valueMap.clear()
+        widgetsByTab.clear()
+        currentTabs.clear()
     }
 
     /** Forces the current connection to restart. */
@@ -25,33 +32,31 @@ object Client {
     /* -------- Widgets -------- */
 
     /** Map of current widget states. */
-    private val valueMap = mutableMapOf<String, MutableState<String>>()
-
-    /** The type of each widget. */
-    private val widgetTypes = mutableMapOf<String, WidgetType>()
-    fun getTypeOfWidget(id: String) = widgetTypes[id]
+    private val valueMap = mutableMapOf<String, MutableState<WidgetUpdate>>()
 
     /** Gets the widget data with a given name. */
     fun getWidgetData(id: String) = valueMap[id]
 
     /** Updates the state of a widget by sending it to the robot code. */
-    fun updateWidget(id: String, value: String) = Ktor.send(WidgetUpdate(id, value))
+    fun updateWidget(id: String, update: WidgetUpdate) = Ktor.send(WidgetUpdateRequest(id, update))
 
+    fun createWidget(widget: Widget) {
+        widgetsByTab[widget.position.tab]?.add(widget)
+    }
 
     /* -------- Tabs -------- */
 
+    /** A map of tab to the widgets that are on it. */
+    private val widgetsByTab = mutableMapOf<String, MutableList<Widget>>()
+    fun getWidgetsOnTab(tab: String) = widgetsByTab[tab] ?: emptyList()
+
     /** A map of the current tabs. */
-    private val currentTabs = mutableStateMapOf<String, Tab>()
+    private val currentTabs = mutableStateMapOf<Int, Tab>()
 
     /** Adds a tab. */
-    private fun addTab(sendable: AddTab) {
-        sendable.tab.widgets.forEach { (widget, _) -> widgetTypes[widget.id] = widget.type }
-        currentTabs[sendable.name] = sendable.tab
-    }
-
-    /** Removes a tab. */
-    private fun removeTab(name: String) {
-        currentTabs.remove(name)
+    private fun addTab(tab: Tab) {
+        currentTabs[tab.index] = tab
+        widgetsByTab[tab.name] = mutableListOf()
     }
 
     fun getCurrentTabs() = currentTabs.values.toList()

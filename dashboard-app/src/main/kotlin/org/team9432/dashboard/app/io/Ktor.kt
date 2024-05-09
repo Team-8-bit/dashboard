@@ -10,7 +10,7 @@ import io.ktor.serialization.kotlinx.json.*
 import kotlinx.coroutines.*
 import kotlinx.serialization.json.Json
 import org.team9432.dashboard.app.ui.AppState
-import org.team9432.dashboard.shared.AddTab
+import org.team9432.dashboard.shared.InitialUpdateMessage
 import org.team9432.dashboard.shared.Sendable
 
 object Ktor {
@@ -43,8 +43,13 @@ object Ktor {
             currentJob = launch {
                 // Get the current state of everything from the robot code
                 val initialData = getInitialData()
-                initialData.filterIsInstance<AddTab>().forEach { Client.processInformation(it) }
-                initialData.filter { it !is AddTab }.forEach { Client.processInformation(it) }
+
+                // Remove any already saved information
+                Client.reset()
+
+                initialData.tabs.forEach { Client.processInformation(it) }
+                initialData.widgets.forEach { Client.processInformation(it) }
+                initialData.widgetData.forEach { Client.processInformation(it) }
 
                 // Connect to the websocket
                 val session = connectToWebsocket()
@@ -75,7 +80,7 @@ object Ktor {
     }
 
     /** Gets the page of initial information from the robot. */
-    private suspend fun getInitialData(): List<Sendable> {
+    private suspend fun getInitialData(): InitialUpdateMessage {
         var reconnectAttempt = 0
         while (true) {
             try {

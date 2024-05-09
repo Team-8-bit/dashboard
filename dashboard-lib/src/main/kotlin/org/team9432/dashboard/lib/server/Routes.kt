@@ -4,8 +4,7 @@ import io.ktor.server.application.*
 import io.ktor.server.response.*
 import io.ktor.server.routing.*
 import org.team9432.dashboard.lib.Dashboard
-import org.team9432.dashboard.shared.AddTab
-import org.team9432.dashboard.shared.Sendable
+import org.team9432.dashboard.shared.InitialUpdateMessage
 
 fun Application.configureRoutes() {
     routing {
@@ -14,11 +13,12 @@ fun Application.configureRoutes() {
         }
 
         get("/currentstate") {
-            val widgetData = Dashboard.getAllWidgetData() as List<Sendable>
-            val tabData = Dashboard.getAllTabs().map { AddTab(it.name, it) } as List<Sendable>
+            val widgetDefinitions = Dashboard.getAllWidgets()
+            val widgetData = Dashboard.getAllWidgetData()
+            val tabData = Dashboard.getAllTabs()
 
             try {
-                call.respond(widgetData + tabData)
+                call.respond(InitialUpdateMessage(tabData, widgetDefinitions, widgetData))
             } catch (e: Exception) {
                 println("Error when sending initial data: ${e.message}")
             }

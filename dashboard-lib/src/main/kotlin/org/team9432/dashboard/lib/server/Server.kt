@@ -8,6 +8,7 @@ import io.ktor.server.plugins.contentnegotiation.*
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.coroutineScope
 import kotlinx.coroutines.launch
+import kotlinx.serialization.json.Json
 import org.team9432.dashboard.lib.Dashboard
 import org.team9432.dashboard.lib.server.Websocket.configureSocket
 import org.team9432.dashboard.shared.Sendable
@@ -20,7 +21,7 @@ object Server {
 
         embeddedServer(Netty, port = 8080, host = "0.0.0.0") {
             install(ContentNegotiation) {
-                json()
+                json(Json { encodeDefaults = false })
             }
 
             configureRoutes()

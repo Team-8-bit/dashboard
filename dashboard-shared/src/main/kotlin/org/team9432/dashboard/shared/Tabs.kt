@@ -1,23 +1,22 @@
 package org.team9432.dashboard.shared
 
+import kotlinx.serialization.EncodeDefault
+import kotlinx.serialization.ExperimentalSerializationApi
+import kotlinx.serialization.SerialName
 import kotlinx.serialization.Serializable
 
-/** Represents a request to add a tab to the dashboard. */
 @Serializable
-data class AddTab(val name: String, val tab: Tab): Sendable
-
-/** Represents a request to remove a tab from the dashboard. */
-@Serializable
-data class RemoveTab(val name: String): Sendable
+data class Widget @OptIn(ExperimentalSerializationApi::class) constructor(
+    val name: String,
+    @SerialName("widgetType") val type: WidgetType,
+    val position: WidgetPosition,
+    @EncodeDefault val id: String = name.hashCode().toString(),
+): Sendable
 
 /** Represents a tab being sent to the dashboard. */
 @Serializable
-data class Tab(val name: String, val index: Int, val numberOfRows: Int, val numberOfCols: Int, val widgets: List<Pair<WidgetDefinition, WidgetPosition>>)
-
-/** Represents all the information about a widget. */
-@Serializable
-data class WidgetDefinition(val name: String, val id: String, val type: WidgetType)
+data class Tab(val name: String, val index: Int, val numberOfRows: Int, val numberOfCols: Int): Sendable
 
 /** Represents a widget and its size and position on a given tab. */
 @Serializable
-data class WidgetPosition(val row: Int, val col: Int, val rowsSpanned: Int, val colsSpanned: Int)
+data class WidgetPosition(val row: Int, val col: Int, val tab: String, val rowsSpanned: Int = 1, val colsSpanned: Int = 1)
