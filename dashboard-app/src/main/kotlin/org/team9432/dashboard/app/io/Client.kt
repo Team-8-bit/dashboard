@@ -23,7 +23,7 @@ object Client {
     fun processInformation(sendable: Sendable) {
         when (sendable) {
             is Tab -> addTab(sendable)
-            is WidgetUpdateRequest -> allWidgets[sendable.id]?.acceptUpdate(sendable.update)
+            is WidgetUpdateRequest -> allWidgets[sendable.name]?.acceptUpdate(sendable.update)
             is CreateWidget -> createWidget(sendable)
             is InitialUpdateMessage -> {}
         }
@@ -40,7 +40,7 @@ object Client {
     /* -------- Widgets -------- */
 
     /** Updates the state of a widget by sending it to the robot code. */
-    fun updateWidget(id: String, update: WidgetUpdate) = Ktor.send(WidgetUpdateRequest(id, update))
+    fun updateWidget(name: String, update: WidgetUpdate) = Ktor.send(WidgetUpdateRequest(name, update))
 
     private val allWidgets = mutableMapOf<String, WidgetBase>()
 
@@ -54,11 +54,12 @@ object Client {
             WidgetType.WritableDouble -> WritableDoubleWidget(data)
             WidgetType.Button -> ButtonWidget(data)
             WidgetType.Dropdown -> DropdownWidget(data)
+            WidgetType.ReadableBooleanList -> ReadableBooleanListWidget(data)
         }
 
         widgetClass.acceptUpdate(data.initialUpdate)
 
-        allWidgets[data.id] = widgetClass
+        allWidgets[data.name] = widgetClass
         data.positions.forEach { widgetsByTab[it.tab]?.add(widgetClass) }
     }
 

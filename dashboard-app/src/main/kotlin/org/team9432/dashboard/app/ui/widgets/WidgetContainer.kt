@@ -19,8 +19,10 @@ fun WidgetContainer(widgetPosition: WidgetPosition, xPerUnit: Dp, yPerUnit: Dp, 
             .offset(x = xPerUnit * widgetPosition.col, y = yPerUnit * widgetPosition.row)
             .padding(5.dp)
     ) {
-        Box(Modifier.fillMaxSize(), contentAlignment = Alignment.Center) {
-            content()
+        Box(Modifier.fillMaxSize()) {
+            Box(Modifier.fillMaxSize().padding(10.dp), contentAlignment = Alignment.Center) {
+                content()
+            }
         }
     }
 }

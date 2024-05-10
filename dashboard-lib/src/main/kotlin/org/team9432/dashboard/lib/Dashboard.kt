@@ -3,6 +3,7 @@ package org.team9432.dashboard.lib
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.coroutineScope
 import org.team9432.dashboard.lib.server.Server
+import org.team9432.dashboard.lib.widgets.Widget
 import org.team9432.dashboard.shared.*
 import kotlin.coroutines.CoroutineContext
 
@@ -18,17 +19,17 @@ object Dashboard {
         Server.run()
     }
 
-    private val callbacks = mutableMapOf<String, (WidgetUpdate) -> Unit>()
+    private val callbacks = mutableMapOf<String, MutableList<(WidgetUpdate) -> Unit>>()
 
-    fun registerCallbackForWidget(id: String, callback: (WidgetUpdate) -> Unit) {
-        callbacks[id] = callback
+    fun registerCallbackForWidget(name: String, callback: (WidgetUpdate) -> Unit) {
+        println("added callback for $name")
+        callbacks.getOrPut(name) { mutableListOf() }.add(callback)
     }
 
     fun processInformation(sendable: Sendable) {
         when (sendable) {
             is WidgetUpdateRequest -> {
-                currentValues[sendable.id] = sendable.update
-                callbacks[sendable.id]?.invoke(sendable.update)
+                callbacks[sendable.name]?.forEach { it.invoke(sendable.update) }
             }
 
             else -> {}
@@ -37,23 +38,23 @@ object Dashboard {
 
     /* -------- Widgets -------- */
 
-    private val currentValues = mutableMapOf<String, WidgetUpdate>()
-
-    fun updateWidget(value: WidgetUpdateRequest) {
-        currentValues[value.id] = value.update
-        Server.sendToAll(value)
+    private val registeredWidgets = mutableListOf<Widget>()
+    fun registerWidget(widget: Widget) {
+        registeredWidgets.add(widget)
     }
 
-    fun getWidgetData(name: String) = currentValues[name]
-    fun getAllWidgetData() = currentValues.map { WidgetUpdateRequest(it.key, it.value) }
+    fun getAllWidgetData() = registeredWidgets.map { it.getCurrentState() }
+
+    fun updateWidget(value: WidgetUpdateRequest) {
+        Server.sendToAll(value)
+    }
 
     private val createdWidgets = mutableMapOf<String, CreateWidget>()
     fun getAllWidgets() = createdWidgets.values.toList()
 
-    fun createWidget(name: String, type: WidgetType, vararg positions: WidgetPosition, initialUpdate: WidgetUpdate, id: String = name.hashCode().toString()) {
-        val widget = CreateWidget(name, type, positions = positions, id, initialUpdate)
-        currentValues[id] = initialUpdate
-        createdWidgets[id] = widget
+    fun createWidget(name: String, type: WidgetType, vararg positions: WidgetPosition, initialUpdate: WidgetUpdate) {
+        val widget = CreateWidget(name, type, positions = positions, initialUpdate)
+        createdWidgets[name] = widget
         Server.sendToAll(widget)
     }
 

@@ -3,7 +3,7 @@ package org.team9432.dashboard.shared
 import kotlinx.serialization.Serializable
 
 @Serializable
-data class WidgetUpdateRequest(val id: String, val update: WidgetUpdate): Sendable
+data class WidgetUpdateRequest(val name: String, val update: WidgetUpdate): Sendable
 
 @Serializable
 sealed interface WidgetUpdate
@@ -26,6 +26,12 @@ data class DropdownUpdate(val options: List<String>): WidgetUpdate
 @Serializable
 data class DropdownSelected(val option: String): WidgetUpdate
 
+@Serializable
+data class BooleanListCreate(val values: Map<String, Boolean>): WidgetUpdate
+
+@Serializable
+data class BooleanListIndividualUpdate(val name: String, val value: Boolean): WidgetUpdate
+
 enum class WidgetType {
     ReadableString,
     ReadableBoolean,
@@ -34,5 +40,6 @@ enum class WidgetType {
     WritableBoolean,
     WritableDouble,
     Button,
-    Dropdown
+    Dropdown,
+    ReadableBooleanList
 }

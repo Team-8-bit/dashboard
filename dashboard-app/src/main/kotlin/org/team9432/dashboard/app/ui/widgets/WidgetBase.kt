@@ -7,7 +7,7 @@ import org.team9432.dashboard.shared.WidgetUpdate
 
 abstract class WidgetBase(val data: CreateWidget) {
     abstract fun acceptUpdate(update: WidgetUpdate)
-    fun sendUpdate(update: WidgetUpdate) = Client.updateWidget(data.id, update)
+    fun sendUpdate(update: WidgetUpdate) = Client.updateWidget(data.name, update)
 
     @Composable
     abstract fun display()
