@@ -33,7 +33,6 @@ class ReadableBooleanListWidget(data: CreateWidget): WidgetBase(data) {
             Text(text = data.name, fontSize = 20.sp, textAlign = TextAlign.Center)
 
             Column(horizontalAlignment = Alignment.CenterHorizontally) {
-                println(currentValues)
                 currentValues.forEach { (name, value) ->
                     Row(Modifier.weight(1F).padding(10.dp), verticalAlignment = Alignment.CenterVertically) {
                         Text(modifier = Modifier.weight(1F), text = name, fontSize = 17.sp, textAlign = TextAlign.Center)
