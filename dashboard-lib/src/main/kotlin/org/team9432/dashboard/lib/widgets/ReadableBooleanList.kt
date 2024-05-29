@@ -19,7 +19,7 @@ class ReadableDashboardBooleanList(val name: String, values: Map<String, Boolean
 
         if (internalMap[name] != value) {
             internalMap[name] = value
-            Dashboard.updateWidget(WidgetUpdateRequest(name, BooleanListIndividualUpdate(name, value)))
+            Dashboard.updateWidget(WidgetUpdateRequest(this.name, BooleanListIndividualUpdate(name, value)))
         }
     }
 
